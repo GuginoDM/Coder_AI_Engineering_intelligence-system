@@ -56,7 +56,8 @@ graph TD
     Analista --> | Retorna métricas | Supervisor
 ```	
 ---
-##Estructura del Repositorio 
+## Estructura del Repositorio 
+```
 intelligence-system/
 	├── app/
 	│   ├── main.py            # Endpoints FastAPI (Lifespan + Encolado)
@@ -76,61 +77,76 @@ intelligence-system/
 	├── .env.example           # Plantilla de variables de entorno
 	├── .gitignore             # Exclusión de archivos temporales y secretos
 	└── README.md              # Documentación
+```
 ---
 
 ## Pasos a seguir:
-** Pasos para Inicializar el Proyecto** 
+**Pasos para Inicializar el Proyecto** 
+
 **1. Configuración Inicial**
-Renombrar archivo .env.example a .env y configurá las claves
+
+	Renombrar archivo .env.example a .env y configurá las claves
 	LLM_PROVIDER=gemini
 	GOOGLE_API_KEY=tu_api_key_aqui
 	TAVILY_API_KEY=tu_api_key_aqui
 	
 **2. Despliegue con Docker Compose**
+	
 	docker-compose up --build
 	API REST (FastAPI): http://localhost:8000
 	Dashboard Arize Phoenix: http://localhost:6006
 
 **3. Cargar la Base de Conocimiento (RAG)**	
+	
 	docker exec -it api_agente python ingest_data.py
 	API REST (FastAPI): http://localhost:8000/docs
 	Dashboard Arize Phoenix: http://localhost:6006
 
 **4. Ejecutar la Suite de Tests**
+	
 	docker exec -it api_agente pip install pytest pytest-asyncio
 	docker exec -it api_agente python -m pytest test_api.py -v
 
 **Ejecución Local en Entorno Virtual**	
 1. **Iniciar el servidor de Redis:**	
-	  docker run -d -p 6379:6379 --name redis_agente redis/redis-stack-server:latest
+	  
+		docker run -d -p 6379:6379 --name redis_agente redis/redis-stack-server:latest
 	
 2. **Crear y activar entorno virtual:**
-	  python -m venv venv
-	  venv\Scripts\activate    
-	
-3. **Instalar dependencias de requirements.txt:**
-	  pip install -r requirements.txt
-	
-4. **Cargar la base de conocimiento (RAG)**
-	  python ingest_data.py
 
-5. **Iniciar la API FastAPI:** 
-	-- uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+   		python -m venv venv
+	 	 venv\Scripts\activate    
+	
+4. **Instalar dependencias de requirements.txt:**
+
+   		pip install -r requirements.txt
+	
+6. **Cargar la base de conocimiento (RAG)**
+
+   		python ingest_data.py
+
+8. **Iniciar la API FastAPI:** 
+
+   		-- uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 	
 **Guía de Uso de los Endpoints(Windows PowerShell)**
 1. **Crear una nueva tarea (POST /tasks)**
-	$body = '{"query": "¿Qué dice el manual interno sobre el stack tecnológico?", "critical": false}'
-	$resp = Invoke-RestMethod -Uri "http://localhost:8000/tasks" -Method Post -ContentType "application/json" -Body $body
-	$resp
+
+   		$body = '{"query": "¿Qué dice el manual interno sobre el stack tecnológico?", "critical": false}'
+	  	$resp = Invoke-RestMethod -Uri "http://localhost:8000/tasks" -Method Post -ContentType "application/json" -Body $body
+	  	$resp
 		 
-2. **Consultar el estado del trabajo (GET /tasks/{job_id})**
-	$jobId = $resp.job_id # Reemplazar por tu ID real si es otra sesión
-	Invoke-RestMethod -Uri "http://localhost:8000/tasks/$jobId" -Method Get
+3. **Consultar el estado del trabajo (GET /tasks/{job_id})**
+
+   		$jobId = $resp.job_id # Reemplazar por tu ID real si es otra sesión
+	  	Invoke-RestMethod -Uri "http://localhost:8000/tasks/$jobId" -Method Get
 	
-3. **Aprobar una tarea pausada por HITL (POST /tasks/{job_id}/approve)**
-	# Para que esto funcione, la tarea debe haberse creado con "critical": true
-	$appr = '{"approved": true, "reason": "Aprobación del operador"}'
-	Invoke-RestMethod -Uri "http://localhost:8000/tasks/$jobId/approve" -Method Post -ContentType "application/json" -Body $appr
+5. **Aprobar una tarea pausada por HITL (POST /tasks/{job_id}/approve)**
+
+   	 	Para que esto funcione, la tarea debe haberse creado con "critical": true
+	  	$appr = '{"approved": true, "reason": "Aprobación del operador"}'
+	 	Invoke-RestMethod -Uri "http://localhost:8000/tasks/$jobId/approve" -Method Post -ContentType "application/json" -Body $appr
 	 
 **Prueba de Carga y Concurrencia (5 Peticiones Simultáneas)**
-	python test_concurrency.py
+	  
+	  	python test_concurrency.py

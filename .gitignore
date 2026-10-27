@@ -1,0 +1,26 @@
+# Entornos virtuales
+venv/
+env/
+.venv/
+
+# Variables de entorno (CRÍTICO: no subir claves)
+.env
+
+# Archivos compilados de Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Bases de datos locales
+*.db
+*.sqlite3
+chroma_db/
+
+# Archivos de sistema y editores (VS Code, Mac, etc.)
+.DS_Store
+.vscode/
+.idea/
+
+# Archivos generados
+graph_diagram.png
